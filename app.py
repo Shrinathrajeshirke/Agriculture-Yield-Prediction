@@ -56,6 +56,10 @@ def predict_datapoint():
             print(error_message)
             logging.error(error_message)
             return render_template('home.html', results=f"Error: {str(e)}")
+        
+@app.route('/health')
+def health():
+    return {'status': 'healthy'}, 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

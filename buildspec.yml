@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Installing dependencies..."
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
+  
+  pre_build:
+    commands:
+      - echo "Running pre-build checks..."
+      - python --version
+      - pip --version
+  
+  build:
+    commands:
+      - echo "Build phase - validating application..."
+      - echo "Build completed on `date`"
+
+artifacts:
+  files:
+    - '**/*'
+
+cache:
+  paths:
+    - '/root/.cache/pip/**/*'

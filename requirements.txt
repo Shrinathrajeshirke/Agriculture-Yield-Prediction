@@ -10,4 +10,5 @@ dill
 plotly
 streamlit
 gunicorn
+setuptools
 #-e .
