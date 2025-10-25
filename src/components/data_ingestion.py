@@ -59,5 +59,6 @@ if __name__=="__main__":
     train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data,test_data)
 
     model_trainer=ModelTrainer()  # Fixed variable name (was using class name)
-    result = model_trainer.intiate_model_trainer(train_arr,test_arr)
+    result,best_model = model_trainer.intiate_model_trainer(train_arr,test_arr)
     print(f"Model R2 Score: {result}")  # Fixed duplicate execution
+    print(f"best model: {best_model}")
