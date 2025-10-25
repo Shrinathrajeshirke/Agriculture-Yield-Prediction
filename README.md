@@ -20,8 +20,8 @@ Developed an end-to-end machine learning pipeline to predict agricultural crop y
 - **Model Persistence**: Dill/Pickle
 
 ##  Model Performance
-- **Best Algorithm**: [Will be determined after training]
-- **R² Score**: [Will be updated after model training]
+- **Best Algorithm**: Linear Regression
+- **R² Score**: 0.9387
 - **Models Tested**: Linear Regression, KNN, Decision Tree, Random Forest, XGBoost, CatBoost, AdaBoost
 
 ##  Project Architecture
