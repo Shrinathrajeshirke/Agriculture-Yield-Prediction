@@ -9,5 +9,5 @@ flask
 dill
 plotly
 streamlit
-gunicorns
+gunicorn
 #-e .
