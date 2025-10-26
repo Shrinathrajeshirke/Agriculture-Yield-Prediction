@@ -45,7 +45,7 @@ ehthumbs.db
 Thumbs.db
 
 # Project Specific
-artifacts/
+
 logs/
 catboost_info/
 mlproject.egg-info/
@@ -55,8 +55,8 @@ mlproject.egg-info/
 .ipynb_checkpoints
 
 # Model Files (if too large)
-*.pkl
-*.joblib
+
+
 
 # Data Files (if too large or sensitive)
 data/*.csv
