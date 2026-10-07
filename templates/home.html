@@ -7,137 +7,85 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Arial', sans-serif;
+            background: #f7f7f7;
+            font-family: Arial, sans-serif;
         }
-        .login {
+        .form-box {
             max-width: 600px;
-            margin: 50px auto;
+            margin: 40px auto;
             background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 25px;
+            border: 1px solid #ddd;
         }
-        .form-label {
-            font-weight: 600;
-            color: #333;
-        }
-        .form-control {
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 12px;
-            transition: all 0.3s ease;
-        }
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .result-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .result-value {
+        h2 {
             font-size: 24px;
-            font-weight: bold;
-            color: #28a745;
-        }
-        h1 {
-            color: #333;
+            color: #000;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
-        legend {
-            color: #667eea;
-            font-size: 28px;
-            margin-bottom: 30px;
+        .btn-simple {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px;
+        }
+        .btn-simple:hover {
+            background: #333;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #000;
             text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="login">
-            <h1>🌾 Agricultural Yield Forecasting System</h1>
-            
-            <form action="{{ url_for('predict_datapoint') }}" method="post">
-                <fieldset>
-                    <legend>Agricultural Yield Prediction</legend>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Soil Quality (%)</label>
-                            <input class="form-control" type="number" name="Soil_Quality" step="0.01"
-                                placeholder="Enter soil quality (0-100)" min='0' max='100' required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Seed Variety</label>
-                            <input class="form-control" type="number" name="Seed_Variety"
-                                placeholder="Enter seed variety code" min='1' max='50' required />
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Fertilizer Amount (kg/hectare)</label>
-                            <input class="form-control" type="number" name="Fertilizer_Amount_kg_per_hectare" step="0.01"
-                                placeholder="Enter fertilizer amount" min='0' max='1000' required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Sunny Days</label>
-                            <input class="form-control" type="number" name="Sunny_Days" step="0.01"
-                                placeholder="Enter number of sunny days" min='0' max='365' required />
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Rainfall (mm)</label>
-                            <input class="form-control" type="number" name="Rainfall_mm" step="0.01"
-                                placeholder="Enter rainfall amount" min='0' max='3000' required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Irrigation Schedule</label>
-                            <input class="form-control" type="number" name="Irrigation_Schedule" step="0.01"
-                                placeholder="Enter irrigation schedule" min='0' max='50' required />
-                        </div>
-                    </div>
-                    
-                    <div class="text-center">
-                        <button class="btn btn-primary btn-lg" type="submit">
-                            🔍 Predict Agricultural Yield
-                        </button>
-                    </div>
-                </fieldset>
-            </form>
-            
-            {% if results %}
-            <div class="result-section">
-                <h3>🎯 Prediction Result</h3>
-                <div class="result-value">
-                    {{ results }} kg/hectare
-                </div>
-                <p class="mt-2 text-muted">Predicted agricultural yield based on your input parameters</p>
-            </div>
-            {% endif %}
+
+<div class="form-box">
+    <h2>Agricultural Yield Prediction</h2>
+
+    <form action="{{ url_for('predict_datapoint') }}" method="post">
+        <div class="mb-3">
+            <label class="form-label">Soil Quality (%)</label>
+            <input class="form-control" type="number" name="Soil_Quality" required>
         </div>
+
+        <div class="mb-3">
+            <label class="form-label">Seed Variety</label>
+            <input class="form-control" type="number" name="Seed_Variety" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Fertilizer Amount (kg/hectare)</label>
+            <input class="form-control" type="number" name="Fertilizer_Amount_kg_per_hectare" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Sunny Days</label>
+            <input class="form-control" type="number" name="Sunny_Days" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Rainfall (mm)</label>
+            <input class="form-control" type="number" name="Rainfall_mm" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Irrigation Schedule</label>
+            <input class="form-control" type="number" name="Irrigation_Schedule" required>
+        </div>
+
+        <button class="btn btn-simple" type="submit">Predict</button>
+    </form>
+
+    {% if results %}
+    <div class="result-box">
+        <strong>Predicted Yield:</strong> {{ results }} kg/hectare
     </div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    {% endif %}
+</div>
+
 </body>
 </html>
