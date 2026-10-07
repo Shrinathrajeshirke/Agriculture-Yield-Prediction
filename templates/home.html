@@ -21,7 +21,18 @@
             font-size: 24px;
             color: #000;
             text-align: center;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #555;
+            font-size: 14px;
             margin-bottom: 20px;
+        }
+        .range-hint {
+            color: #666;
+            font-size: 12px;
+            margin-top: 4px;
         }
         .btn-simple {
             width: 100%;
@@ -39,51 +50,87 @@
             border: 1px solid #000;
             text-align: center;
         }
+        .error-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #b00020;
+            color: #b00020;
+            background: #fff5f5;
+        }
     </style>
 </head>
 <body>
 
 <div class="form-box">
     <h2>Agricultural Yield Prediction</h2>
+    <p class="subtitle">Enter values within the ranges shown. They match the data the model was trained on.</p>
 
     <form action="{{ url_for('predict_datapoint') }}" method="post">
         <div class="mb-3">
-            <label class="form-label">Soil Quality (%)</label>
-            <input class="form-control" type="number" name="Soil_Quality" required>
+            <label class="form-label" for="Soil_Quality">Soil Quality (%)</label>
+            <input class="form-control" type="number" id="Soil_Quality" name="Soil_Quality"
+                   step="any" required
+                   min="{{ limits['Soil_Quality'][0] }}" max="{{ limits['Soil_Quality'][1] }}"
+                   value="{{ request.form.get('Soil_Quality', '') }}">
+            <div class="range-hint">Allowed: {{ limits['Soil_Quality'][0] }} to {{ limits['Soil_Quality'][1] }}</div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Seed Variety</label>
-            <input class="form-control" type="number" name="Seed_Variety" required>
+            <label class="form-label" for="Seed_Variety">Seed Variety</label>
+            <select class="form-select" id="Seed_Variety" name="Seed_Variety" required>
+                <option value="" disabled {% if not request.form.get('Seed_Variety') %}selected{% endif %}>Select variety</option>
+                <option value="0" {% if request.form.get('Seed_Variety') == '0' %}selected{% endif %}>Variety 0</option>
+                <option value="1" {% if request.form.get('Seed_Variety') == '1' %}selected{% endif %}>Variety 1</option>
+            </select>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Fertilizer Amount (kg/hectare)</label>
-            <input class="form-control" type="number" name="Fertilizer_Amount_kg_per_hectare" required>
+            <label class="form-label" for="Fertilizer_Amount_kg_per_hectare">Fertilizer Amount (kg/hectare)</label>
+            <input class="form-control" type="number" id="Fertilizer_Amount_kg_per_hectare"
+                   name="Fertilizer_Amount_kg_per_hectare" step="any" required
+                   min="{{ limits['Fertilizer_Amount_kg_per_hectare'][0] }}" max="{{ limits['Fertilizer_Amount_kg_per_hectare'][1] }}"
+                   value="{{ request.form.get('Fertilizer_Amount_kg_per_hectare', '') }}">
+            <div class="range-hint">Allowed: {{ limits['Fertilizer_Amount_kg_per_hectare'][0] }} to {{ limits['Fertilizer_Amount_kg_per_hectare'][1] }}</div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Sunny Days</label>
-            <input class="form-control" type="number" name="Sunny_Days" required>
+            <label class="form-label" for="Sunny_Days">Sunny Days</label>
+            <input class="form-control" type="number" id="Sunny_Days" name="Sunny_Days"
+                   step="any" required
+                   min="{{ limits['Sunny_Days'][0] }}" max="{{ limits['Sunny_Days'][1] }}"
+                   value="{{ request.form.get('Sunny_Days', '') }}">
+            <div class="range-hint">Allowed: {{ limits['Sunny_Days'][0] }} to {{ limits['Sunny_Days'][1] }}</div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Rainfall (mm)</label>
-            <input class="form-control" type="number" name="Rainfall_mm" required>
+            <label class="form-label" for="Rainfall_mm">Rainfall (mm)</label>
+            <input class="form-control" type="number" id="Rainfall_mm" name="Rainfall_mm"
+                   step="any" required
+                   min="{{ limits['Rainfall_mm'][0] }}" max="{{ limits['Rainfall_mm'][1] }}"
+                   value="{{ request.form.get('Rainfall_mm', '') }}">
+            <div class="range-hint">Allowed: {{ limits['Rainfall_mm'][0] }} to {{ limits['Rainfall_mm'][1] }}</div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Irrigation Schedule</label>
-            <input class="form-control" type="number" name="Irrigation_Schedule" required>
+            <label class="form-label" for="Irrigation_Schedule">Irrigation Schedule</label>
+            <input class="form-control" type="number" id="Irrigation_Schedule" name="Irrigation_Schedule"
+                   step="1" required
+                   min="{{ limits['Irrigation_Schedule'][0] }}" max="{{ limits['Irrigation_Schedule'][1] }}"
+                   value="{{ request.form.get('Irrigation_Schedule', '') }}">
+            <div class="range-hint">Whole number, {{ limits['Irrigation_Schedule'][0] }} to {{ limits['Irrigation_Schedule'][1] }}</div>
         </div>
 
         <button class="btn btn-simple" type="submit">Predict</button>
     </form>
 
-    {% if results %}
-    <div class="result-box">
-        <strong>Predicted Yield:</strong> {{ results }} kg/hectare
-    </div>
+    {% if results is defined and results %}
+        {% if results is string and results.startswith('Error') %}
+        <div class="error-box" role="alert">{{ results }}</div>
+        {% else %}
+        <div class="result-box">
+            <strong>Predicted Yield:</strong> {{ results }} kg/hectare
+        </div>
+        {% endif %}
     {% endif %}
 </div>
 

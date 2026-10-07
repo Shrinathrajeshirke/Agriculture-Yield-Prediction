@@ -13,6 +13,35 @@ from src.logger import logging
 application = Flask(__name__)
 app = application
 
+FEATURE_LIMITS = {
+    "Soil_Quality": (50, 100),
+    "Fertilizer_Amount_kg_per_hectare": (50, 300),
+    "Sunny_Days": (50, 150),
+    "Rainfall_mm": (100, 900),
+    "Irrigation_Schedule": (0, 15),
+}
+VALID_SEED_VARIETIES = {0, 1}
+
+
+def validate_inputs(form):
+    errors = []
+    for name, (lo, hi) in FEATURE_LIMITS.items():
+        try:
+            value = float(form.get(name))
+        except (TypeError, ValueError):
+            errors.append(f"{name} must be a number.")
+            continue
+        if not lo <= value <= hi:
+            errors.append(f"{name} must be between {lo} and {hi}.")
+        elif name == "Irrigation_Schedule" and value != int(value):
+            errors.append("Irrigation_Schedule must be a whole number.")
+    try:
+        if int(form.get("Seed_Variety")) not in VALID_SEED_VARIETIES:
+            errors.append("Seed_Variety must be 0 or 1.")
+    except (TypeError, ValueError):
+        errors.append("Seed_Variety must be 0 or 1.")
+    return errors
+
 ## Route for home page
 @app.route('/')
 def index():
@@ -21,41 +50,29 @@ def index():
 @app.route('/predictdata', methods=['GET', 'POST'])
 def predict_datapoint():
     if request.method == 'GET':
-        return render_template('home.html')
-    else:
-        try:
-            # Get form data with proper type conversion
-            data = CustomData(
-                Soil_Quality=float(request.form.get('Soil_Quality')),
-                Seed_Variety=int(request.form.get('Seed_Variety')),
-                Fertilizer_Amount_kg_per_hectare=float(request.form.get('Fertilizer_Amount_kg_per_hectare')),
-                Sunny_Days=float(request.form.get('Sunny_Days')),
-                Rainfall_mm=float(request.form.get('Rainfall_mm')),
-                Irrigation_Schedule=float(request.form.get('Irrigation_Schedule')),
-            )
+        return render_template('home.html', limits=FEATURE_LIMITS)
 
-            pred_df = data.get_data_as_data_frame()
-            print("Input DataFrame:")
-            print(pred_df)
-            logging.info(f"Prediction input: {pred_df.to_dict()}")
-
-            print("Before calling predict pipeline")
-            predict_pipeline = PredictPipeline()
-            results = predict_pipeline.predict(pred_df)
-            print("After calling predict pipeline")
-            print(f"Prediction result: {results}")
-            
-            # Round the result for better display
-            final_result = round(results[0], 2)
-            logging.info(f"Prediction result: {final_result}")
-            
-            return render_template('home.html', results=final_result)
-            
-        except Exception as e:
-            error_message = f"Error occurred: {str(e)}"
-            print(error_message)
-            logging.error(error_message)
-            return render_template('home.html', results=f"Error: {str(e)}")
+    errors = validate_inputs(request.form)
+    if errors:
+        return render_template('home.html', results="Error: " + " ".join(errors),
+                               limits=FEATURE_LIMITS)
+    try:
+        data = CustomData(
+            Soil_Quality=float(request.form['Soil_Quality']),
+            Seed_Variety=int(request.form['Seed_Variety']),
+            Fertilizer_Amount_kg_per_hectare=float(request.form['Fertilizer_Amount_kg_per_hectare']),
+            Sunny_Days=float(request.form['Sunny_Days']),
+            Rainfall_mm=float(request.form['Rainfall_mm']),
+            Irrigation_Schedule=int(float(request.form['Irrigation_Schedule'])),
+        )
+        results = PredictPipeline().predict(data.get_data_as_data_frame())
+        final_result = round(float(results[0]), 2)
+        return render_template('home.html', results=final_result, limits=FEATURE_LIMITS)
+    except Exception as e:
+        logging.error(f"Prediction failed: {e}")
+        return render_template('home.html',
+                               results="Error: prediction failed. Please check your inputs.",
+                               limits=FEATURE_LIMITS)
         
 @app.route('/health')
 def health():
@@ -63,4 +80,4 @@ def health():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080)) 
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False)
