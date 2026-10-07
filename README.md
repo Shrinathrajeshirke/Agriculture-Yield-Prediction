@@ -26,7 +26,7 @@ Developed an end-to-end machine learning pipeline to predict agricultural crop y
 
 ##  Project Architecture
 
-### Data Pipeline
+### Data Pipeline structure
 1. **Data Ingestion**: Loads raw agricultural data and splits into train/test sets
 2. **Data Transformation**: Handles missing values, feature scaling, and categorical encoding  
 3. **Model Training**: Compares multiple algorithms with hyperparameter tuning
